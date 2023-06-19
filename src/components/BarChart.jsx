@@ -66,9 +66,23 @@ const BarChart = ({ isDashboard = false }) => {
           spacing: 10,
         },
       ]}
+      fill={[
+        {
+          match: {
+            id: "fries",
+          },
+          id: "dots",
+        },
+        {
+          match: {
+            id: "sandwich",
+          },
+          id: "lines",
+        },
+      ]}
       borderColor={{
         from: "color",
-        modifiers: [["darker", "1.6"]],
+        modifiers: [["darker", 1.6]],
       }}
       axisTop={null}
       axisRight={null}
@@ -76,7 +90,7 @@ const BarChart = ({ isDashboard = false }) => {
         tickSize: 5,
         tickPadding: 5,
         tickRotation: 0,
-        legend: isDashboard ? undefined : "country", // changed
+        legend: "country",
         legendPosition: "middle",
         legendOffset: 32,
       }}
@@ -84,11 +98,10 @@ const BarChart = ({ isDashboard = false }) => {
         tickSize: 5,
         tickPadding: 5,
         tickRotation: 0,
-        legend: isDashboard ? undefined : "food", // changed
+        legend: "food",
         legendPosition: "middle",
         legendOffset: -40,
       }}
-      enableLabel={false}
       labelSkipWidth={12}
       labelSkipHeight={12}
       labelTextColor={{
@@ -120,9 +133,10 @@ const BarChart = ({ isDashboard = false }) => {
         },
       ]}
       role="application"
-      barAriaLabel={function (e) {
-        return e.id + ": " + e.formattedValue + " in country: " + e.indexValue;
-      }}
+      ariaLabel="Nivo bar chart demo"
+      barAriaLabel={(e) =>
+        e.id + ": " + e.formattedValue + " in country: " + e.indexValue
+      }
     />
   );
 };
