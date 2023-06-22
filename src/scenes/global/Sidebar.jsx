@@ -16,6 +16,7 @@ import PieChartOutlineOutlinedIcon from "@mui/icons-material/PieChartOutlineOutl
 import TimelineOutlinedIcon from "@mui/icons-material/TimelineOutlined";
 import MenuOutlinedIcon from "@mui/icons-material/MenuOutlined";
 import MapOutlinedIcon from "@mui/icons-material/MapOutlined";
+import TableChartOutlinedIcon from "@mui/icons-material/TableChartOutlined";
 
 const Item = ({ title, to, icon, selected, setSelected }) => {
   const theme = useTheme();
@@ -192,7 +193,7 @@ const Sidebar = () => {
             <Item
               title="Data Table"
               to="/table"
-              icon={<ReceiptOutlinedIcon />}
+              icon={<TableChartOutlinedIcon />}
               selected={selected}
               setSelected={setSelected}
             />

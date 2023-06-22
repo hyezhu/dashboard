@@ -1,23 +1,43 @@
-import { Box, Typography, useTheme } from "@mui/material";
+import { Box, Typography, useTheme, AppBar } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
 import { tokens } from "../../theme";
 import { mockDataTable } from "../../data/mockData";
 import Header from "../../components/Header";
+// import SyncTable from "./syncfusion";
 
 const AdsData = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
 
- const regionNames = new Intl.DisplayNames(["en"], { type: "region" });
+  const numberColumns = [
+    "AD_REQUESTS",
+    "CLICKS",
+    "IMPRESSIONS",
+    "MATCHED_REQUESTS",
+  ];
+
+  const symbolColumns = [
+    "ESTIMATED_EARNINGS",
+    "IMPRESSION_CTR",
+    "MATCH_RATE",
+    "SHOW_RATE",
+    "OBSERVED_ECPM",
+  ];
+
+  const numberComparator = (v1, v2) => Number(v1) - Number(v2);
+  const symbolComparator = (a, b) =>
+    Number(a.substring(0, a.length - 1)) - Number(b.substring(0, b.length - 1));
+
+  const regionNames = new Intl.DisplayNames(["en"], { type: "region" });
 
   const parseCountryCode = (code) => {
-        try {
-           return regionNames.of(code);
-        } catch (e) {
-            console.error("Couldn't parse country code");
-            return code;
-        }
-  }
+    try {
+      return regionNames.of(code);
+    } catch (e) {
+      console.error("Couldn't parse country code");
+      return code;
+    }
+  };
 
   const listAnalytics = [];
 
@@ -39,64 +59,60 @@ const AdsData = () => {
     listAnalytics.push(tableEntry);
   }
 
+  // push last row
+  let summaryRow = {};
+
+  for (let j = 0; j < mockDataTable.body.titles.length; j++) {
+    //COLUMNS
+    let name = mockDataTable.body.titles[j];
+    let value = mockDataTable.body.summary[j];
+    summaryRow[name] = value;
+  }
+  summaryRow.id = mockDataTable.body.values[0].length;
+  listAnalytics.push(summaryRow);
+
   for (let j = 0; j < mockDataTable.body.titles.length; j++) {
     //COLUMNS
     let header = mockDataTable.body.titles[j];
-    columnsAnalytics.push({
-      field: header,
-      headerName: header.replace("_", " "),
-    });
+    if (numberColumns.includes(header)) {
+      columnsAnalytics.push({
+        field: header,
+        headerName: header.replace("_", " "),
+        sortComparator: numberComparator,
+      });
+    } else if (symbolColumns.includes(header)) {
+      columnsAnalytics.push({
+        field: header,
+        headerName: header.replace("_", " "),
+        sortComparator: symbolComparator,
+      });
+    } else {
+      columnsAnalytics.push({
+        field: header,
+        headerName: header.replace("_", " "),
+      });
+    }
   }
 
-  // const columnsAnalytics = [
-  //   { field: "COUNTRY", headerName: "COUNTRY" },
-  //   { field: "AD_UNIT", headerName: "COUNTRY" },
-  //   { field: "FORMAT", headerName: "COUNTRY" },
-  //   { field: "AD_REQUESTS", headerName: "COUNTRY" },
-  //   { field: "CLICKS", headerName: "COUNTRY" },
-  //   { field: "ESTIMATED_EARNINGS", headerName: "COUNTRY" },
-  //   { field: "IMPRESSIONS", headerName: "COUNTRY" },
-  //   { field: "IMPRESSION_CTR", headerName: "COUNTRY" },
-  //   { field: "MATCHED_REQUESTS", headerName: "COUNTRY" },
-  //   { field: "MATCH_RATE", headerName: "COUNTRY" },
-  //   { field: "SHOW_RATE", headerName: "COUNTRY" },
-  //   { field: "OBSERVED_ECPM", headerName: "COUNTRY" },
-  // ];
+  //   const dateFormat = (date) => {
+  //     const year = date.getFullYear();
+  //     const month = date.getMonth().pad(2);
+  //     const day = date.getDate().pad(2);
+  //     const hour = date.getHours().pad(2);
+  //     const minute = date.getMinutes().pad(2);
+  //     const second = date.getSeconds().pad(2);
 
-  const columns = [
-    { field: "name", headerName: "COUNTRY" },
-    {
-      field: "value",
-      headerName: "AD UNIT",
-      flex: 1,
-      cellClassName: "name-column--cell",
-    },
-    {
-      field: "ad format",
-      headerName: "AD FORMAT",
-      flex: 1,
-    },
-    {
-      field: "requests",
-      headerName: "AD REQUESTS",
-      flex: 1,
-    },
-    {
-      field: "cost",
-      headerName: "Cost",
-      flex: 1,
-      renderCell: (params) => (
-        <Typography color={colors.greenAccent[500]}>
-          ${params.row.cost}
-        </Typography>
-      ),
-    },
-    {
-      field: "date",
-      headerName: "Date",
-      flex: 1,
-    },
-  ];
+  //     const dayFormatted = `${year} - ${month} - ${day}`;
+
+  //     const timeFormatted = `${hour}:${minute}:${second}`;
+
+  //     return (
+  //       <span>
+  //         `${dayFormatted}` <strong>`${timeFormatted}`</strong>
+  //       </span>
+  //     );
+  //   };
+  //   console.log(dateFormat(new Date()));
 
   return (
     <Box m="20px">
@@ -130,13 +146,14 @@ const AdsData = () => {
           },
         }}
       >
-        {/* <DataGrid checkboxSelection rows={mockDataInvoices} columns={columns} /> */}
         <DataGrid
           checkboxSelection
-          rows={listAnalytics}
           columns={columnsAnalytics}
+          rows={listAnalytics}
+          sort
         />
       </Box>
+      {/* <SyncTable /> */}
     </Box>
   );
 };
